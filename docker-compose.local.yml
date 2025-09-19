@@ -4,73 +4,75 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: dockerfile
     image: laravel-app
     container_name: laravel_app
     volumes:
-      - .:/var/www/html
+      - ./:/var/www/html:delegated
     ports:
-      - '8000:8000'
+      - "8000:8000"
     environment:
       - APP_ENV=local
       - APP_DEBUG=true
-      - DB_HOST=mysql
-      - DB_PORT=3306
-      - DB_DATABASE=laravel
-      - DB_USERNAME=root
-      - DB_PASSWORD=
+      - APP_URL=http://82.115.49.244:8000
     depends_on:
-      - mysql
-    command: php -S 0.0.0.0:8000 -t public
+      mysql:
+        condition: service_healthy
     networks:
-      - laravel-network
-
-  vite:
-    image: node:20
-    container_name: laravel_vite
-    working_dir: /var/www/html
-    volumes:
-      - .:/var/www/html
-    ports:
-      - '5173:5173'
-    command: >
-      sh -c "npm install && npm run dev -- --host 0.0.0.0"
-    depends_on:
-      - app
-    networks:
-      - laravel-network
+      - laravel
 
   mysql:
     image: mysql:8.0
     container_name: laravel_mysql
     environment:
-      - MYSQL_DATABASE=college
-      - MYSQL_ROOT_PASSWORD=
-      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: college
+      MYSQL_PASSWORD: 
     volumes:
       - mysql-data:/var/lib/mysql
     ports:
-      - '3306:3306'
+      - "127.0.0.1:3306:3306" # Restrict to localhost to prevent external shutdowns
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "college"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    command: --default-authentication-plugin=mysql_native_password
     networks:
-      - laravel-network
+      - laravel
 
   phpmyadmin:
-    image: phpmyadmin:latest
+    image: phpmyadmin/phpmyadmin
     container_name: laravel_phpmyadmin
     environment:
-      - PMA_HOST=mysql
-      - PMA_USER=root
-      - PMA_PASSWORD=
+      PMA_HOST: mysql
+      PMA_PORT: 3306
     ports:
-      - '8080:80'
+      - "8080:80"
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     networks:
-      - laravel-network
+      - laravel
+
+  vite:
+    image: node:18
+    container_name: laravel_vite
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html:delegated
+    ports:
+      - "5173:5173"
+    command: >
+      bash -c "npm install && npm run dev -- --host 0.0.0.0"
+    networks:
+      - laravel
 
 volumes:
   mysql-data:
 
 networks:
-  laravel-network:
+  laravel:
     driver: bridge

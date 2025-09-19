@@ -73,49 +73,49 @@ const menuItems = computed(() => {
 		});
 	}
 
-	if (route.params.subject_id && route.params.topic_id) {
-		items.push(
-			{
-				name: 'Описание',
-				route: `${basePath}/description`,
-				active: route.name === 'lesson_detail_description',
-				disabled: false
-			},
-			{
-				name: 'Лекция',
-				route: `${basePath}/lection`,
-				active: route.name === 'lection',
-				disabled: false
-			},
-			{
-				name: 'Тестирование',
-				route: `${basePath}/testing`,
-				active: route.name === 'lesson_testing',
-				disabled: false
-			}
-		);
-	}
+	// if (route.params.subject_id && route.params.topic_id) {
+	// 	items.push(
+	// 		{
+	// 			name: 'Описание',
+	// 			route: `${basePath}/description`,
+	// 			active: route.name === 'lesson_detail_description',
+	// 			disabled: false
+	// 		},
+	// 		{
+	// 			name: 'Лекция',
+	// 			route: `${basePath}/lection`,
+	// 			active: route.name === 'lection',
+	// 			disabled: false
+	// 		},
+	// 		{
+	// 			name: 'Тестирование',
+	// 			route: `${basePath}/testing`,
+	// 			active: route.name === 'lesson_testing',
+	// 			disabled: false
+	// 		}
+	// 	);
+	// }
 
 	return items;
 });
 </script>
 
 <template>
-	<nav class="bg-gray-800 p-2">
+	<nav class="">
 		<ul class="flex space-x-2">
 			<li v-for="item in menuItems" :key="item.name" class="flex items-center">
 				<router-link
 					:to="item.route"
-					class="text-white hover:text-gray-300 px-2 py-1 rounded flex items-center"
+					class="inline-block text-white rounded flex items-center"
 					:class="{ 'bg-gray-600': item.active, 'pointer-events-none text-gray-400': item.disabled }"
 				>
 					<img
 						v-if="item.image"
 						:src="item.image"
 						alt="Team Image"
-						class="inline-block w-12 h-12 mr-1 rounded"
+						class="inline-block w-16 h-16 rounded"
 					/>
-					{{ item.name }}
+					<!-- {{ item.name }} -->
 				</router-link>
 			</li>
 		</ul>

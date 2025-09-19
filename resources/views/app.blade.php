@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Vue + Laravel</title>
-  @vite(['resources/css/main.css', 'resources/js/app.js'])
+  <meta charset="utf-8">
+  <title>Code Wave</title>
+  @vite(['resources/js/app.js'])
 </head>
 <body>
   <div id="app"></div>

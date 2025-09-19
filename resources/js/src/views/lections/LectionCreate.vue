@@ -1,6 +1,6 @@
 <template>
-	<div class="max-w-4xl mx-auto mt-6 p-4 bg-white rounded shadow">
-		<MdEditor v-model="lectionText" language="ru-RU" style="height: 300px" class="mb-4" />
+	<div class=" mx-auto mt-6 bg-white rounded ">
+		<MdEditor v-model="lectionText" language="ru-RU" style="height: 300px; width: 100%;" class="mb-4" />
 		<button
 			@click="submit"
 			class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700"

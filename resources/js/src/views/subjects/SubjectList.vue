@@ -22,7 +22,7 @@ onMounted(() => {
 		v-if="auth.isAdmin"
 		class="p-2 px-12 text-white rounded-sm bg-blue-500 mb-4"
 	>
-		Create
+		Создать
 	</button>
 
 	<div class="grid grid-cols-3 gap-8">

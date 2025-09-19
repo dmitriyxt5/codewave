@@ -19,7 +19,8 @@ const isThemePage = computed(
 		route.name === 'lection_create' ||
 		route.name === 'lection' ||
 		route.name === 'Command' ||
-		route.name === 'command_create'
+		route.name === 'command_create' 
+		// route.name === 'subject'
 )
 const isModulesPage = computed(() => route.name === 'Модули')
 
@@ -36,9 +37,6 @@ const completedStages = ref({
 const links = computed(() => {
 	const commonLinks = [
 		{ to: '/subjects', icon: 'link.svg', label: 'Модули', extraClass: 'filter-gray-400' },
-		{ to: '/', icon: 'book.svg', label: 'Книги' },
-		{ to: '/', icon: 'book.svg', label: 'Отработки' },
-		{ to: '/', icon: 'book.svg', label: 'Как это сделано?' }
 	]
 
 	if (isModulesPage.value) {

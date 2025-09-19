@@ -116,8 +116,7 @@ onMounted(fetchCommand);
 </script>
 
 <template>
-	<div class="p-6">
-		<h1 class="text-2xl font-bold mb-4">Команда</h1>
+	<div class="shadow-1">
 
 		<div v-if="authStore.role !== 'admin'" class="mb-4 p-3 bg-yellow-100 rounded-lg">
 			<div class="flex items-center">
@@ -132,7 +131,7 @@ onMounted(fetchCommand);
 
 		<div v-if="isLoading" class="text-gray-500">Загрузка...</div>
 
-		<div v-else-if="command" class="bg-white rounded-lg shadow p-4 mb-6">
+		<div v-else-if="command" class="bg-white rounded-lg p-4 mb-6">
 			<div class="flex flex-col md:flex-row gap-6">
 				<div class="flex-1">
 					<h2 class="text-xl font-bold mb-2">Текущий барс команды</h2>

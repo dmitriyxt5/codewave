@@ -56,7 +56,7 @@ onMounted(fetchStudents)
 
 
 <template>
-	<div class="p-6">
+	<div class="">
 		<h1 class="text-2xl font-bold mb-4">Создание команды</h1>
 
 		<div v-if="error" class="text-red-500 mb-4">

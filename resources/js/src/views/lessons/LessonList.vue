@@ -36,7 +36,7 @@ const handleDelete = async (id) => {
 			class="p-2 px-12 text-white rounded-sm bg-blue-500 mb-4"
 			@click="router.push(`/subjects/${subjectId}/topic/create`)"
 		>
-			Create
+			Создать
 		</button>
 		<div class="flex text-gray-400 pb-4">
 			<div class="basis-1/12">№</div>

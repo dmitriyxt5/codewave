@@ -55,7 +55,7 @@ onMounted(async () => {
 
 <template>
 	<div class="w-full rounded-lg shadow-1 px-8 py-7">
-		<h2 class="text-2xl font-bold mb-4">{{ lectionTitle }}</h2>
+		<!-- <h2 class="text-2xl font-bold mb-4">{{ lectionTitle }}</h2> -->
 		<LectionCreate v-if="authStore.isAdmin" :subjectId="subjectId" :topicId="topicId" />
 		<LectionShow :content="lectionContent" />
 	</div>

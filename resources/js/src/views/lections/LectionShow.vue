@@ -30,7 +30,7 @@ onMounted(async () => {
 </script>
 
 <template>
-	<div class="mx-auto mt-6 p-4 bg-white rounded shadow">
+	<div class="mx-auto bg-white rounded">
 		<!-- <h1 class="text-2xl font-bold mb-4">{{ lectionTitle }}</h1> -->
 		<MdPreview v-model="markdownContent" language="ru-RU" />
 	</div>
