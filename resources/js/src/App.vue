@@ -13,7 +13,9 @@ const authStore = useAuthStore()
 
 authStore.token && authStore.getProfile()
 
-const isLoginPage = computed(() => router.currentRoute.value.name === 'login')
+const isLoginPage = computed(
+	() => router.currentRoute.value.name === 'login' || router.currentRoute.value.name === 'register'
+)
 </script>
 
 <template>

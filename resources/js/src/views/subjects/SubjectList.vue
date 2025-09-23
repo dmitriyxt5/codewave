@@ -24,6 +24,13 @@ onMounted(() => {
 	>
 		Создать
 	</button>
+	<button
+		@click="router.push('/student_create')"
+		v-if="auth.isAdmin"
+		class="p-2 ml-4 px-12 text-white rounded-sm bg-blue-500 mb-4"
+	>
+		Зарегистрировать студента
+	</button>
 
 	<div class="grid grid-cols-3 gap-8">
 		<LoadingCard

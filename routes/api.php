@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Route;
 
 // Public routes (no authentication required)
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/students/register', [AuthController::class, 'student_register']);
+
+
 Route::get('/subjects', [SubjectController::class, 'index']);
 Route::get('/subjects/{id}', [SubjectController::class, 'edit']);
 

@@ -6,7 +6,7 @@ import { useAuthStore } from '@/stores/useAuthStore'
 const route = useRoute()
 const authStore = useAuthStore()
 onMounted(() => {
-	console.log(route.name, 'ewq')
+	console.log(route.name, 'route name')
 })
 const isThemePage = computed(
 	() =>
@@ -19,8 +19,9 @@ const isThemePage = computed(
 		route.name === 'lection_create' ||
 		route.name === 'lection' ||
 		route.name === 'Command' ||
-		route.name === 'command_create' 
-		// route.name === 'subject'
+		route.name === 'command_create' ||
+		route.name === 'register'
+	// route.name === 'subject'
 )
 const isModulesPage = computed(() => route.name === 'Модули')
 
@@ -36,9 +37,9 @@ const completedStages = ref({
 
 const links = computed(() => {
 	const commonLinks = [
-		{ to: '/subjects', icon: 'link.svg', label: 'Модули', extraClass: 'filter-gray-400' },
+		{ to: '/subjects', icon: 'link.svg', label: 'Модули', extraClass: 'filter-gray-400' }
 	]
-
+	// console.log(isModulesPage.value, '123')
 	if (isModulesPage.value) {
 		return commonLinks
 	}

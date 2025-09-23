@@ -48,6 +48,11 @@ watch(
 				</div>
 				<button type="submit" class="bg-blue-500 text-white rounded py-2.5">Войти</button>
 				<div v-if="error" class="error text-red-500">{{ error }}</div>
+				<a
+					@click="router.push('/register')"
+					class="justify-center text-sm flex cursor-pointer hover:text-blue-500"
+					>Регистрация</a
+				>
 			</form>
 		</div>
 	</div>

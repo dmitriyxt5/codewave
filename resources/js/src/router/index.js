@@ -2,8 +2,12 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/useAuthStore'
 
 import Login from '@/views/auth/LoginView.vue'
+import Register from '@/views/auth/RegisterView.vue'
+
 import SubjectList from '@/views/subjects/SubjectList.vue'
 import SubjectCreate from '@/views/subjects/SubjectCreate.vue'
+import StudentCreate from '@/views/subjects/StudentCreate.vue'
+
 import SubjectEdit from '@/views/subjects/SubjectEdit.vue'
 import LessonList from '@/views/lessons/LessonList.vue'
 import LessonDetail from '@/views/lessons/LessonDetail.vue'
@@ -21,6 +25,7 @@ import Command from '@/views/command/Command.vue'
 
 const routes = [
 	{ path: '/', name: 'login', component: Login },
+	{ path: '/register', name: 'register', component: Register },
 	{
 		path: '/subjects',
 		name: 'subjects',
@@ -32,6 +37,12 @@ const routes = [
 		name: 'subjects_create',
 		component: SubjectCreate,
 		meta: { requiresAuth: true, title: 'Список модулей' }
+	}, // student_create
+	{
+		path: '/student_create',
+		name: 'student_create',
+		component: StudentCreate,
+		meta: { requiresAuth: true, title: 'Student Create' }
 	},
 	{
 		path: '/lessons',
