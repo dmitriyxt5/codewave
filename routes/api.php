@@ -6,6 +6,8 @@ use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\GradesController;
+
 use App\Http\Controllers\TopicController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -31,6 +33,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/subjects/edit/{subject}', [SubjectController::class, 'update']);
     Route::post('/subjects/store', [SubjectController::class, 'store']);
     Route::delete('/subjects/{id}', [SubjectController::class, 'destroy']);
+
+    // Grades
+    Route::get('/grades', [GradesController::class, 'index']);
+
 
     // Topic routes
     Route::get('/subjects/{id}/topics', [TopicController::class, 'index']);

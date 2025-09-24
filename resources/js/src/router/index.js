@@ -7,7 +7,7 @@ import Register from '@/views/auth/RegisterView.vue'
 import SubjectList from '@/views/subjects/SubjectList.vue'
 import SubjectCreate from '@/views/subjects/SubjectCreate.vue'
 import StudentCreate from '@/views/subjects/StudentCreate.vue'
-
+import JournalView from '@/views/journal/JournalView.vue'
 import SubjectEdit from '@/views/subjects/SubjectEdit.vue'
 import LessonList from '@/views/lessons/LessonList.vue'
 import LessonDetail from '@/views/lessons/LessonDetail.vue'
@@ -127,6 +127,12 @@ const routes = [
 		name: 'Command',
 		component: Command,
 		meta: { requiresAuth: true, title: 'Команда' }
+	},
+	{
+		path: '/journal/:subject_id',
+		name: 'journal',
+		component: JournalView,
+		meta: { requiresAuth: true, title: 'Журнал' }
 	}
 	// {
 	// 	path: '/subjects/:subject_id/topic/:topic_id/command_create',

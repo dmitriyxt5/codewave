@@ -10,9 +10,8 @@ const route = useRoute()
 const topicsStore = useTopicsStore()
 const authStore = useAuthStore()
 
-const subjectId = route.params.subject_id
-
 const score = ref('?')
+const subjectId = route.params.subject_id
 
 onMounted(() => {
 	// console.log(authStore.getUser.id, 'user') // Для отладки о передаче user
@@ -38,9 +37,17 @@ const handleDelete = async (id) => {
 		>
 			Создать
 		</button>
+		<button
+			v-if="authStore.isAdmin"
+			class="p-2 ml-4 px-12 text-white rounded-sm bg-blue-500 mb-4"
+			@click="router.push(`/journal/${subjectId}/`)"
+		>
+			Журнал
+		</button>
 		<div class="flex text-gray-400 pb-4">
 			<div class="basis-1/12">№</div>
 			<div class="basis-full">Тема</div>
+
 			<div class="basis-2/12">Дата</div>
 			<div v-if="!authStore.isAdmin" class="basis-2/12">Оценка</div>
 		</div>
