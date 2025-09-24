@@ -1,67 +1,73 @@
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
+import { ref, onMounted, watch, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import axios from 'axios'
 
-const route = useRoute();
-const router = useRouter();
-const teamImage = ref('/images/animals/bars.jpg');
-const isLoading = ref(false);
-const error = ref(null);
-const cache = ref({});
-const hasCommand = ref(false);
+const route = useRoute()
+const router = useRouter()
+const teamImage = ref('/images/animals/bars.jpg')
+const isLoading = ref(false)
+const error = ref(null)
+const cache = ref({})
+const hasCommand = ref(false)
 
 const fetchTeamImage = async () => {
-	const subjectId = route.params.subject_id;
+	const subjectId = route.params.subject_id
 
 	if (subjectId) {
 		if (cache.value[subjectId]) {
-			teamImage.value = cache.value[subjectId].link;
-			hasCommand.value = cache.value[subjectId].exists;
-			return;
+			teamImage.value = cache.value[subjectId].link
+			hasCommand.value = cache.value[subjectId].exists
+			return
 		}
 
-		isLoading.value = true;
-		error.value = null;
+		isLoading.value = true
+		error.value = null
 		try {
-			const response = await axios.get(`/api/subjects/${subjectId}/command-image`);
-			if (response.status === 200 && response.data && response.data.link && response.data.exists !== false) {
-				teamImage.value = response.data.link;
-				hasCommand.value = true;
-				cache.value[subjectId] = { link: response.data.link, exists: true };
+			const response = await axios.get(`/api/subjects/${subjectId}/command-image`)
+			if (
+				response.status === 200 &&
+				response.data &&
+				response.data.link &&
+				response.data.exists !== false
+			) {
+				teamImage.value = response.data.link
+				hasCommand.value = true
+				cache.value[subjectId] = { link: response.data.link, exists: true }
 			} else {
-				teamImage.value = '/images/animals/bars.jpg';
-				hasCommand.value = false;
-				cache.value[subjectId] = { link: '/images/animals/bars.jpg', exists: false };
+				teamImage.value = '/images/animals/bars.jpg'
+				hasCommand.value = false
+				cache.value[subjectId] = { link: '/images/animals/bars.jpg', exists: false }
 			}
 		} catch (err) {
-			error.value = err?.response?.data?.error || 'Ошибка при загрузке изображения команды';
-			teamImage.value = '/images/animals/bars.jpg';
-			hasCommand.value = false;
-			cache.value[subjectId] = { link: '/images/animals/bars.jpg', exists: false };
-			console.error(err);
+			error.value = err?.response?.data?.error || 'Ошибка при загрузке изображения команды'
+			teamImage.value = '/images/animals/bars.jpg'
+			hasCommand.value = false
+			cache.value[subjectId] = { link: '/images/animals/bars.jpg', exists: false }
+			console.error(err)
 		} finally {
-			isLoading.value = false;
+			isLoading.value = false
 		}
 	} else {
-		teamImage.value = '/images/animals/bars.jpg';
-		hasCommand.value = false;
+		teamImage.value = '/images/animals/bars.jpg'
+		hasCommand.value = false
 	}
-};
+}
 
-onMounted(fetchTeamImage);
+onMounted(fetchTeamImage)
 watch(
 	() => route.params.subject_id,
 	() => {
-		fetchTeamImage();
+		fetchTeamImage()
 	}
-);
+)
 
 const menuItems = computed(() => {
-	const basePath = route.params.subject_id && route.params.topic_id
-		? `/subjects/${route.params.subject_id}/topic/${route.params.topic_id}`
-		: '#';
-	const items = [];
+	const basePath =
+		route.params.subject_id && route.params.topic_id
+			? `/subjects/${route.params.subject_id}/topic/${route.params.topic_id}`
+			: '#'
+	const items = []
 
 	if (route.params.subject_id && hasCommand.value) {
 		items.push({
@@ -70,7 +76,7 @@ const menuItems = computed(() => {
 			active: route.name === 'Command',
 			image: teamImage.value,
 			disabled: !route.params.topic_id
-		});
+		})
 	}
 
 	// if (route.params.subject_id && route.params.topic_id) {
@@ -96,8 +102,8 @@ const menuItems = computed(() => {
 	// 	);
 	// }
 
-	return items;
-});
+	return items
+})
 </script>
 
 <template>
@@ -107,7 +113,10 @@ const menuItems = computed(() => {
 				<router-link
 					:to="item.route"
 					class="inline-block text-white rounded flex items-center"
-					:class="{ 'bg-gray-600': item.active, 'pointer-events-none text-gray-400': item.disabled }"
+					:class="{
+						'bg-gray-600': item.active,
+						'pointer-events-none text-gray-400': item.disabled
+					}"
 				>
 					<img
 						v-if="item.image"
@@ -119,7 +128,7 @@ const menuItems = computed(() => {
 				</router-link>
 			</li>
 		</ul>
-		<div v-if="isLoading" class="text-white">Загрузка...</div>
+		<div v-if="isLoading" class="text-white">Loading...</div>
 		<div v-if="error" class="text-red-400">{{ error }}</div>
 	</nav>
 </template>
