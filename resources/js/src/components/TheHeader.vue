@@ -3,6 +3,7 @@ import { watch } from 'vue'
 
 import { useAuthStore } from '@/stores/useAuthStore'
 import router from '@/router'
+import TranslateSwitcher from './TranslateSwitcher.vue'
 
 const authStore = useAuthStore()
 
@@ -23,6 +24,7 @@ watch(
 				<img src="/icons/logo.svg" alt="Code Wave" />
 			</router-link>
 		</div>
+		<TranslateSwitcher />
 		<div class="flex items-center gap-5">
 			<div class="flex items-center gap-4">
 				<img class="w-12 h-12 rounded-full bg-gray-30 object-cover" src="/temp-card.jpg" alt="" />
