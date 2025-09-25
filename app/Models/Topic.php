@@ -21,6 +21,8 @@ class Topic extends Model
         'tasks',
         'description',
         'type',
+        'created_at',
+        'updated_at',
     ];
     public function test()
     {

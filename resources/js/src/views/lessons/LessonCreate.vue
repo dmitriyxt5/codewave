@@ -26,7 +26,8 @@ const createTopics = async () => {
 		formData.append('tasks', tasks.value)
 		formData.append('description', description.value)
 		formData.append('type', type.value)
-		console.log(subject_id.value, 'subject_id')
+		formData.append('date', date.value)
+		console.log(subject_id.value, 'subject_id', 'date', date.value)
 		const response = await axios.post(`/api/subjects/${subject_id.value}/topics/store`, formData)
 
 		if (response.status === 201) {

@@ -14,29 +14,30 @@ class TopicController extends Controller
     {
         try {
             $userId = $request->query('user_id');
-
+    
             $topics = Topic::where('subject_id', $id)
                 ->with(['test.results' => function ($query) use ($userId) {
                     if ($userId) {
-                        $query->where('user_id', $userId)->select('id', 'test_id', 'user_id', 'score');
+                        $query->where('user_id', $userId)
+                              ->select('id', 'test_id', 'user_id', 'score');
                     }
                 }])
+                ->orderBy('created_at', 'desc') // сортировка по дате
                 ->get()
-                ->map(function ($topic) use ($userId) {
-                    // Get the score from the first TestResult (if any) for the user
+                ->map(function ($topic) {
                     $score = $topic->test && $topic->test->results->isNotEmpty()
                         ? $topic->test->results->first()->score
                         : null;
-
+    
                     return [
                         'id' => $topic->id,
                         'subject_id' => $topic->subject_id,
                         'name' => $topic->name,
                         'date' => $topic->created_at->format('d.m.Y'),
-                        'score' => $score, // Include score instead of request
+                        'score' => $score,
                     ];
                 });
-
+    
             return response()->json($topics, 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -45,6 +46,7 @@ class TopicController extends Controller
             ], 400);
         }
     }
+    
     /**
      * Store a newly created resource in storage.
      */
@@ -57,19 +59,27 @@ class TopicController extends Controller
             'tasks' => 'required|string',
             'description' => 'required|string',
             'type' => 'required|in:lecture,practical',
+            'date' => 'nullable|date',
         ]);
-
-        $topic = Topic::create([
+    
+        $data = [
             'subject_id' => $request->subject_id,
             'name' => $request->name,
             'objective' => $request->objective,
             'tasks' => $request->tasks,
             'description' => $request->description,
             'type' => $request->type,
-        ]);
-
+        ];
+    
+        if ($request->filled('date')) {
+            $data['created_at'] = $request->date;
+        }
+    
+        $topic = Topic::create($data);
+    
         return response()->json($topic, 201);
     }
+    
 
     /**
      * Display the specified resource.
