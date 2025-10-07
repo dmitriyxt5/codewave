@@ -16,13 +16,13 @@ class CommandController extends Controller
             return response()->json(['link' => '/images/animals/bars.jpg'], 200);
         }
 
-        return response()->json(['link' => $command->link], 200);
+        return response()->json(['link' => json_decode($command->items)], 200);
     }
 
     public function spendCoinsAndUpgrade(Request $request, $id)
     {
         $request->validate([
-            'type' => 'required|in:standard_bars,golden_bars,silver_bars,epic_bars,legendary_bars',
+            'type' => 'required',
             'price' => 'required|integer|min:0'
         ]);
 
@@ -31,6 +31,10 @@ class CommandController extends Controller
         if (Auth::user()->role !== 'admin' && Auth::user()->id !== $command->leader_id) {
             return response()->json(['error' => 'Только лидер команды может совершать покупки'], 403);
         }
+        $items = json_decode($command->items) ?? []; 
+        $items[] = $request->type; 
+        $command->update(['items' => json_encode($items)]);
+
 
         if ($command->balls < $request->price) {
             return response()->json(['error' => 'Недостаточно баллов'], 400);
@@ -58,7 +62,8 @@ class CommandController extends Controller
             'subject_id' => $request->subject_id,
             'leader_id' => $request->leader_id,
             'member_ids' => json_encode($request->member_ids),
-            'link' => '/images/animals/bars.jpg'
+            'link' => '/images/animals/bars.jpg',
+            'items' => "[1]"
         ]);
 
         return response()->json($command, 201);

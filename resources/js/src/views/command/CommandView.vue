@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/useAuthStore'
 import axios from 'axios'
@@ -10,44 +10,125 @@ const command = ref(null)
 const error = ref(null)
 const isLoading = ref(false)
 const coins = ref(0)
+const teamImage = ref('/images/animals/bars.jpg')
+const cache = ref({})
+const hasCommand = ref(false)
+
+const imageById = (id) => {
+	if (id == null) return '/images/animals/bars.jpg'
+	const f = shopItems.value.find((i) => String(i.id) === String(id))
+	return f?.image ?? '/images/animals/bars.jpg'
+}
+
+const safeParse = (v) => {
+	if (Array.isArray(v)) return v
+	try {
+		return JSON.parse(v)
+	} catch {
+		return null
+	}
+}
+
+const fetchTeamImage = async () => {
+	const subjectId = route.params.subject_id
+	if (!subjectId) {
+		teamImage.value = '/images/animals/bars.jpg'
+		hasCommand.value = false
+		return
+	}
+
+	if (cache.value[subjectId]) {
+		const { lastId, exists } = cache.value[subjectId]
+		teamImage.value = imageById(lastId)
+		hasCommand.value = exists
+		return
+	}
+
+	isLoading.value = true
+	error.value = null
+
+	try {
+		const response = await axios.get(`/api/subjects/${subjectId}/command-image`)
+		if (response.status === 200 && response.data) {
+			const { items, exists } = response.data
+			const arr = safeParse(items)
+			const lastId = arr?.[arr.length - 1] ?? null
+			const finalImage = imageById(lastId)
+			teamImage.value = finalImage
+			hasCommand.value = exists !== false
+			cache.value[subjectId] = { lastId, exists: hasCommand.value }
+		} else {
+			teamImage.value = '/images/animals/bars.jpg'
+			hasCommand.value = false
+			cache.value[subjectId] = { lastId: null, exists: false }
+		}
+	} catch (err) {
+		error.value = err?.response?.data?.error || 'Ошибка при загрузке изображения команды'
+		teamImage.value = '/images/animals/bars.jpg'
+		hasCommand.value = false
+		cache.value[subjectId] = { lastId: null, exists: false }
+	} finally {
+		isLoading.value = false
+	}
+}
 
 const shopItems = ref([
 	{
-		id: 'standard_bars',
+		id: 1,
 		name: 'Стандартный барс',
 		price: 0,
 		image: '/images/animals/bars.jpg',
 		owned: true
 	},
 	{
-		id: 'golden_bars',
+		id: 2,
 		name: 'Золотой барс',
-		price: 2100,
+		price: 200,
 		image: '/images/animals/golden_bars.jpg',
 		owned: false
 	},
 	{
-		id: 'silver_bars',
+		id: '3',
 		name: 'Серебряный барс',
-		price: 1400,
+		price: 14000,
 		image: '/images/animals/silver_bars.jpg',
 		owned: false
 	},
 	{
-		id: 'epic_bars',
+		id: '4',
 		name: 'Эпический барс',
-		price: 3500,
+		price: 35000,
 		image: '/images/animals/epic_bars.jpg',
 		owned: false
 	},
 	{
-		id: 'legendary_bars',
+		id: '5',
 		name: 'Легендарный барс',
-		price: 7000,
+		price: 72000,
 		image: '/images/animals/legendary_bars.jpg',
 		owned: false
 	}
 ])
+
+const lastItemId = computed(() => {
+	if (!command.value?.items) return null
+
+	try {
+		const arr = JSON.parse(command.value.items)
+		return arr[arr.length - 1] ?? null
+	} catch (e) {
+		console.error('Ошибка парсинга items', e)
+		return null
+	}
+})
+
+const lastItemImage = computed(() => {
+	if (!lastItemId.value) return '/images/animals/bars.jpg'
+	const found = shopItems.value.find(
+		(item) => item.id == lastItemId.value // == чтобы работало и для строковых id
+	)
+	return found ? found.image : '/images/animals/bars.jpg'
+})
 
 const fetchCommand = async () => {
 	isLoading.value = true
@@ -62,6 +143,16 @@ const fetchCommand = async () => {
 			shopItems.value.forEach((item) => {
 				if (command.value.link === item.image) {
 					item.owned = true
+				}
+				console.log(response.data.items, 'item')
+				// response.data.items.forEach
+				if (response.data.items !== null) {
+					JSON.parse(response.data.items).forEach((element) => {
+						// console.log('element', element, item, 'item')
+						if (element == item.id) {
+							item.owned = true
+						}
+					})
 				}
 			})
 		} else {
@@ -134,8 +225,9 @@ onMounted(fetchCommand)
 			<div class="flex flex-col md:flex-row gap-6">
 				<div class="flex-1">
 					<h2 class="text-xl font-bold mb-2">Текущий барс команды</h2>
+					<!-- <p>{{ JSON.parse(command.items)[JSON.parse(command.items).length - 1] }}</p> -->
 					<img
-						:src="command.link || '/images/animals/bars.jpg'"
+						:src="lastItemImage"
 						:alt="`Команда ${command.id}`"
 						class="mb-4 max-w-xs rounded border-4 border-blue-200"
 					/>
@@ -151,7 +243,7 @@ onMounted(fetchCommand)
 							:class="{
 								'border-green-300 bg-green-50': item.owned,
 								'border-gray-200': !item.owned,
-								'ring-2 ring-blue-400': command.link === item.image
+								'ring-2 ring-blue-400': item.id == lastItemId
 							}"
 						>
 							<img
@@ -183,15 +275,10 @@ onMounted(fetchCommand)
 											item.owned ||
 											(authStore.role !== 'admin' &&
 												(coins < item.price || authStore.user?.id !== command?.leader_id)),
-										'bg-green-100 text-green-800': command.link === item.image
+										'bg-green-100 text-green-800': item.id == lastItemId
 									}"
-									:title="
-										authStore.role !== 'admin' && authStore.user?.id !== command?.leader_id
-											? 'Только лидер может совершать покупки'
-											: ''
-									"
 								>
-									{{ command.link === item.image ? 'Активен' : item.owned ? 'Куплен' : 'Купить' }}
+									{{ item.id == lastItemId ? 'Активен' : item.owned ? 'Куплен' : 'Купить' }}
 								</button>
 							</div>
 						</div>

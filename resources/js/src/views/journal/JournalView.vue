@@ -13,17 +13,68 @@ const selectedTopic = ref(null)
 const loading = ref(false)
 const errorText = ref('')
 
+// персонажи
+const shopItems = ref([
+	{ id: 1, name: 'Стандартный барс', image: '/images/animals/bars.jpg' },
+	{ id: 2, name: 'Золотой барс', image: '/images/animals/golden_bars.jpg' },
+	{ id: 3, name: 'Серебряный барс', image: '/images/animals/silver_bars.jpg' },
+	{ id: 4, name: 'Эпический барс', image: '/images/animals/epic_bars.jpg' },
+	{ id: 5, name: 'Легендарный барс', image: '/images/animals/legendary_bars.jpg' }
+])
+
+const ownedIds = ref([]) // какие куплены
+const activeId = ref(null) // какой активен
+
 const subjectId = route.params.subject_id
 
+// загрузка оценок и персонажей
 onMounted(async () => {
 	await topicsStore.getTopics(subjectId)
 	topics.value = Array.isArray(topicsStore.topics) ? topicsStore.topics : []
+
+	// загрузка персонажей команды
+	await loadTeamData()
+
 	if (topics.value.length) {
 		selectedTopic.value = topics.value[0].id
 		await loadGrades()
 	}
 })
 
+// получить информацию о купленных персонажах
+const loadTeamData = async () => {
+	try {
+		const { data } = await axios.get(`/api/subjects/${subjectId}/command-image`)
+		console.log('test', data.link)
+
+		if (!data) return
+
+		// Купленные персонажи — все элементы массива link
+		if (Array.isArray(data.link)) {
+			ownedIds.value = data.link.map((id) => String(id))
+			activeId.value = String(data.link[data.link.length - 1])
+		} else if (typeof data.link === 'string' && data.link.startsWith('[')) {
+			// если пришла строка "[1,2,3]"
+			try {
+				const parsed = JSON.parse(data.link)
+				ownedIds.value = parsed.map((id) => String(id))
+				activeId.value = String(parsed[parsed.length - 1])
+			} catch {
+				ownedIds.value = []
+				activeId.value = null
+			}
+		} else {
+			ownedIds.value = []
+			activeId.value = null
+		}
+	} catch (e) {
+		console.error('Ошибка загрузки данных команды', e)
+		ownedIds.value = []
+		activeId.value = null
+	}
+}
+
+// загрузка оценок
 const loadGrades = async () => {
 	if (!selectedTopic.value) return
 	loading.value = true
@@ -43,7 +94,34 @@ const loadGrades = async () => {
 </script>
 
 <template>
-	<div class="max-w-5xl mx-auto space-y-4">
+	<div class="max-w-5xl mx-auto space-y-6">
+		<!-- Персонажи команды -->
+		<div class="bg-white shadow-sm rounded-2xl ring-1 ring-gray-200 p-4">
+			<h2 class="text-lg font-semibold mb-3">Персонажи команды</h2>
+			<div class="flex flex-wrap gap-4">
+				<div
+					v-for="item in shopItems"
+					:key="item.id"
+					class="relative w-32 text-center border rounded-xl overflow-hidden transition-transform"
+					:class="{
+						'border-green-400 bg-green-50': ownedIds.includes(String(item.id)),
+						'border-gray-200 opacity-60': !ownedIds.includes(String(item.id)),
+						'ring-4 ring-blue-400': String(item.id) === String(activeId)
+					}"
+				>
+					<img :src="item.image" :alt="item.name" class="w-full h-24 object-cover" />
+					<div class="py-2 text-sm font-medium">{{ item.name }}</div>
+					<div
+						v-if="String(item.id) === String(activeId)"
+						class="absolute top-1 right-1 bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full"
+					>
+						Активен
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Таблица оценок -->
 		<div class="flex flex-wrap items-center gap-3">
 			<label for="topic" class="text-sm text-gray-600">Выберите тему</label>
 			<select

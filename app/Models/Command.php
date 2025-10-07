@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Command extends Model
 {
-    protected $fillable = ['subject_id', 'leader_id', 'member_ids', 'link', 'balls'];
+    protected $fillable = ['items', 'subject_id', 'leader_id', 'member_ids', 'link', 'balls'];
 
+    
     protected $casts = [
-        'member_ids' => 'array'
+        'member_ids' => 'array',
+        'items' => 'array'
     ];
 
     public function topic()
