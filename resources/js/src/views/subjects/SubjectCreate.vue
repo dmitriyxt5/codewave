@@ -21,7 +21,8 @@ const createSubject = async () => {
 		formData.append('name', name.value)
 		formData.append('description', description.value)
 		formData.append('image', image.value)
-
+		let token = localStorage.getItem('authToken')
+		axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
 		const response = await axios.post('/api/subjects/store', formData)
 
 		if (response.status === 201) {

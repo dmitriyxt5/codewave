@@ -67,6 +67,7 @@ class SubjectController extends Controller
             'name' => $request->name,
             'description' => $request->description,
             'image' => $imagePath,
+            'user_id' => $request->user()->id
         ]);
 
         return response()->json($subject, 201);

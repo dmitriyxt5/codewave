@@ -13,7 +13,7 @@ class Subject extends Model
         'name',
         'description',
         'image',
-        'user'
+        'user_id'
     ];
 
     public function topics()
