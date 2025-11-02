@@ -18,11 +18,13 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/students/register', [AuthController::class, 'student_register']);
 
 
-Route::get('/subjects', [SubjectController::class, 'index']);
 Route::get('/subjects/{id}', [SubjectController::class, 'edit']);
 
 // Protected routes (require auth:sanctum)
+
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/subjects', [SubjectController::class, 'index']);
+
     // User routes
     Route::get('/user', function (Request $request) {
         return $request->user();

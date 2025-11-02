@@ -9,9 +9,28 @@ use Illuminate\Support\Facades\Storage;
 class SubjectController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $subjects = Subject::with('topics')->get()->map(function ($subject) {
+        $user_id = $request->user()->id;
+        $role = $request->user()->role;
+        $subjects = Subject::with('topics')->with('commands')->with('user')->get()->map(function ($subject) use ($user_id, $role) {
+            if ($role == 'user') {
+                $userCommands = $subject->commands->filter(function ($command) use ($user_id) {
+                    $member_ids = json_decode($command->members_ids, true);
+                    return in_array($user_id, $member_ids ?? []);
+                });
+
+                if ($userCommands->isEmpty()) {
+                    return null;
+                }
+            } else if ($role == 'admin') {
+                // return $subject->user_id;
+
+                if ($subject->user_id !== $user_id) {
+                    return null;
+                }
+            }
+            
             return [
                 'id' => $subject->id,
                 'name' => $subject->name,
@@ -19,8 +38,11 @@ class SubjectController extends Controller
                 'image' => $subject->image,
                 'lecture_count' => $subject->countLectureTopics(),
                 'practice_count' => $subject->countPracticeTopics(),
+                'user' => $subject->user,
+                // 'members' => $subject->commands->members,
+                // 'user_id' => $request->user(),
             ];
-        });
+        })->filter();
 
         return response()->json($subjects, 200);
     }

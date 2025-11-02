@@ -29,11 +29,13 @@ const handleDeleteSubject = async (id) => {
 <template>
 	<div class="shadow-1 rounded-lg overflow-hidden">
 		<div class="h-32">
-			<img
-				:src="`${subject.image ? `/storage/${subject.image}` : '/images/default-subject.jpg'}`"
-				:alt="subject.name"
-				class="w-full h-full object-cover"
-			/>
+			<router-link :to="`/subjects/${subject.id}`">
+				<img
+					:src="`${subject.image ? `/storage/${subject.image}` : '/images/default-subject.jpg'}`"
+					:alt="subject.name"
+					class="w-full h-full object-cover"
+				/>
+			</router-link>
 		</div>
 		<div class="p-5">
 			<router-link :to="`/subjects/${subject.id}`" class="block font-extrabold mb-1">{{

@@ -12,14 +12,21 @@ class Subject extends Model
     protected $fillable = [
         'name',
         'description',
-        'image'
+        'image',
+        'user'
     ];
 
     public function topics()
     {
         return $this->hasMany(Topic::class);
     }
-
+    public function commands()
+    {
+        return $this->hasMany(Command::class);
+    }
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
     public function countLectureTopics()
     {
         return $this->topics()->where('type', 'lecture')->count();
