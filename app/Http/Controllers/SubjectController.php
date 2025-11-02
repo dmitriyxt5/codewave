@@ -15,9 +15,10 @@ class SubjectController extends Controller
         $role = $request->user()->role;
         $subjects = Subject::with('topics')->with('commands')->with('user')->get()->map(function ($subject) use ($user_id, $role) {
             if ($role == 'user') {
+                
                 $userCommands = $subject->commands->filter(function ($command) use ($user_id) {
-                    $member_ids = json_decode($command->members_ids, true);
-                    return in_array($user_id, $member_ids ?? []);
+                    $member_ids = json_decode($command->member_ids, true) ?? [];
+                    return in_array($user_id, $member_ids);
                 });
 
                 if ($userCommands->isEmpty()) {
