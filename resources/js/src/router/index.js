@@ -70,7 +70,7 @@ const routes = [
 	},
 	{
 		path: '/subjects/:subject_id',
-		name: 'subject',
+		name: 'subjects_list',
 		component: LessonList,
 		meta: { requiresAuth: true, title: 'Список тем' }
 	},
@@ -123,10 +123,10 @@ const routes = [
 		meta: { requiresAuth: true, title: 'Лекция' }
 	},
 	{
-		path: '/subjects/:subject_id/topic/:topic_id/command',
+		path: '/subjects/:subject_id/command',
 		name: 'Command',
 		component: Command,
-		meta: { requiresAuth: true, title: 'Команда' }
+		meta: { requiresAuth: true, title: 'Команды' }
 	},
 	{
 		path: '/journal/:subject_id',

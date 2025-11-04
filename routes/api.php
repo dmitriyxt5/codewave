@@ -71,7 +71,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/commands/{id}/students', [CommandController::class, 'addStudents']);
     Route::put('/commands/{id}', [CommandController::class, 'update']);
     Route::delete('/commands/{id}', [CommandController::class, 'destroy']);
-    Route::get('/subjects/{subject_id}/topic/{topic_id}/command', [CommandController::class, 'show']);
+    Route::get('/subjects/{subject_id}/command', [CommandController::class, 'show']);
     Route::post('/commands/{id}/upgrade-photo', [CommandController::class, 'upgradePhoto']);
     Route::post('/commands/{id}/spend-coins-upgrade', [CommandController::class, 'spendCoinsAndUpgrade']);
     Route::get('/subjects/{subject_id}/command-image', [CommandController::class, 'getTeamImage']); // New route

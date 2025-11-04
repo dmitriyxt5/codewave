@@ -34,15 +34,17 @@ const submit = async () => {
 			leader_id: selectedLeader.value,
 			member_ids: selectedMembers.value
 		})
-		router.push({
-			name: 'Command',
-			params: {
-				subject_id: route.params.subject_id,
-				topic_id: route.params.topic_id
-			}
-		}).then(() => {
-			router.go(0)
-		})
+		router
+			.push({
+				name: 'Command',
+				params: {
+					subject_id: route.params.subject_id
+					// topic_id: route.params.topic_id
+				}
+			})
+			.then(() => {
+				router.go(0)
+			})
 	} catch (err) {
 		error.value = 'Ошибка при создании команды'
 		console.error(err)
@@ -53,7 +55,6 @@ const submit = async () => {
 
 onMounted(fetchStudents)
 </script>
-
 
 <template>
 	<div class="">

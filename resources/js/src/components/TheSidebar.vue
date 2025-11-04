@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/useAuthStore'
 
@@ -24,6 +24,15 @@ const isThemePage = computed(
 	// route.name === 'subject'
 )
 const isModulesPage = computed(() => route.name === 'Модули')
+const isThemeListPage = computed(() => route.name === 'subjects_list')
+const isCommandPage = computed(() => route.name === 'Command')
+
+watch(
+	() => route.name,
+	() => {
+		console.log(route.name, 'route name')
+	}
+)
 
 const completedStages = ref({
 	Команда: true,
@@ -39,30 +48,87 @@ const links = computed(() => {
 	const commonLinks = [
 		{ to: '/subjects', icon: 'link.svg', label: 'Модули', extraClass: 'filter-gray-400' }
 	]
+
 	// console.log(isModulesPage.value, '123')
 	if (isModulesPage.value) {
 		return commonLinks
+	}
+
+	if (isThemeListPage.value) {
+		return [
+			{ to: '/subjects', icon: 'link.svg', label: 'Модули', extraClass: 'filter-gray-400' },
+			{
+				to: {
+					name: 'Command',
+					params: {
+						subject_id: route.params.subject_id
+					}
+				},
+				icon: 'link.svg',
+				label: 'Команда',
+				extraClass: 'filter-gray-400'
+			}
+		]
+	}
+
+	if (isCommandPage.value) {
+		return [
+			{ to: '/subjects', icon: 'link.svg', label: 'Модули', extraClass: 'filter-gray-400' },
+			{
+				to: {
+					name: 'subjects_list',
+					params: {
+						subject_id: route.params.subject_id
+					}
+				},
+				icon: 'link.svg',
+				label: 'Список тем',
+				extraClass: 'filter-gray-400'
+			},
+			{
+				to: {
+					name: 'Command',
+					params: {
+						subject_id: route.params.subject_id
+					}
+				},
+				icon: 'link.svg',
+				label: 'Команда',
+				extraClass: 'filter-gray-400'
+			}
+		]
 	}
 
 	if (isThemePage.value) {
 		return [
 			{
 				to: {
-					name: 'Command',
+					name: 'subjects_list',
 					params: {
-						subject_id: route.params.subject_id,
-						topic_id: route.params.topic_id
+						subject_id: route.params.subject_id
 					}
 				},
-				icon: 'test.svg',
-				label: 'Команда'
+				icon: 'link.svg',
+				label: 'Список тем',
+				extraClass: 'filter-gray-400'
 			},
+			// {
+			// 	to: {
+			// 		name: 'Command',
+			// 		params: {
+			// 			subject_id: route.params.subject_id
+			// 			// topic_id: route.params.topic_id
+			// 		}
+			// 	},
+			// 	icon: 'test.svg',
+			// 	label: 'Команда'
+			// },
 			{
 				to: {
 					name: 'lesson_detail_description',
 					params: {
-						subject_id: route.params.subject_id,
-						topic_id: route.params.topic_id
+						subject_id: route.params.subject_id
+						// topic_id: route.params.topic_id
 					}
 				},
 				icon: 'descr.svg',
@@ -102,8 +168,8 @@ const links = computed(() => {
 				to: {
 					name: 'lesson_testing',
 					params: {
-						subject_id: route.params.subject_id,
-						topic_id: route.params.topic_id
+						subject_id: route.params.subject_id
+						// topic_id: route.params.topic_id
 					}
 				},
 				icon: 'test.svg',

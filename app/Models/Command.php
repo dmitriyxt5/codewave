@@ -24,6 +24,7 @@ class Command extends Model
         return $this->belongsTo(User::class, 'leader_id');
     }
 
+    
     public function members()
     {
         $memberIds = is_string($this->member_ids) ? json_decode($this->member_ids, true) : $this->member_ids;

@@ -56,7 +56,7 @@ class CommandController extends Controller
             'member_ids.*' => 'exists:users,id'
         ]);
 
-        Command::where('subject_id', $request->subject_id)->delete();
+        // Command::where('subject_id', $request->subject_id)->delete(); We remove deletes for create multi commands
 
         $command = Command::create([
             'subject_id' => $request->subject_id,
@@ -72,10 +72,18 @@ class CommandController extends Controller
     public function show(Request $request)
     {
         $subject_id = $request->route('subject_id');
-        $command = Command::where('subject_id', $subject_id)->with('leader')->firstOrFail();
-        $command->members = $command->members();
-        return response()->json($command);
+
+        $commands = Command::where('subject_id', $subject_id)
+            ->with('leader')
+            ->get();
+
+        foreach ($commands as $command) {
+            $command->members = $command->members();
+        }
+
+        return response()->json($commands);
     }
+
 
     public function getStudents()
     {

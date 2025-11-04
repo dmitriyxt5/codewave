@@ -11,42 +11,42 @@ class SubjectController extends Controller
 
     public function index(Request $request)
     {
-        $user_id = $request->user()->id;
-        $role = $request->user()->role;
-        $subjects = Subject::with('topics')->with('commands')->with('user')->get()->map(function ($subject) use ($user_id, $role) {
-            if ($role == 'user') {
-                
-                $userCommands = $subject->commands->filter(function ($command) use ($user_id) {
-                    $member_ids = json_decode($command->member_ids, true) ?? [];
-                    return in_array($user_id, $member_ids);
+        $user = $request->user();
+
+        $subjects = Subject::with(['topics', 'commands', 'user'])
+            ->get()
+            ->filter(function ($subject) use ($user) {
+
+                // Админ видит только свои предметы
+                if ($user->role === 'admin') {
+                    return $subject->user_id === $user->id;
+                }
+
+                // Пользователь: есть ли хотя бы одна команда с ним внутри
+                return $subject->commands->contains(function ($command) use ($user) {
+                    $members = is_string($command->member_ids)
+                        ? json_decode($command->member_ids, true)
+                        : ($command->member_ids ?? []);
+                    return in_array($user->id, $members, true) ||
+                        $command->leader_id === $user->id;
                 });
+            })
+            ->map(function ($subject) {
+                return [
+                    'id' => $subject->id,
+                    'name' => $subject->name,
+                    'description' => $subject->description,
+                    'image' => $subject->image,
+                    'lecture_count' => $subject->countLectureTopics(),
+                    'practice_count' => $subject->countPracticeTopics(),
+                    'user' => $subject->user,
+                ];
+            })
+            ->values();
 
-                if ($userCommands->isEmpty()) {
-                    return null;
-                }
-            } else if ($role == 'admin') {
-                // return $subject->user_id;
-
-                if ($subject->user_id !== $user_id) {
-                    return null;
-                }
-            }
-            
-            return [
-                'id' => $subject->id,
-                'name' => $subject->name,
-                'description' => $subject->description,
-                'image' => $subject->image,
-                'lecture_count' => $subject->countLectureTopics(),
-                'practice_count' => $subject->countPracticeTopics(),
-                'user' => $subject->user,
-                // 'members' => $subject->commands->members,
-                // 'user_id' => $request->user(),
-            ];
-        })->filter();
-
-        return response()->json($subjects, 200);
+        return response()->json($subjects);
     }
+
 
     public function create()
     {
