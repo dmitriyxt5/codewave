@@ -28,7 +28,7 @@ class CommandController extends Controller
 
         $command = Command::findOrFail($id);
 
-        if (Auth::user()->role !== 'admin' && Auth::user()->id !== $command->leader_id) {
+        if (Auth::user()->role !== 'admin' || 'superadmin' && Auth::user()->id !== $command->leader_id) {
             return response()->json(['error' => 'Только лидер команды может совершать покупки'], 403);
         }
         $items = json_decode($command->items) ?? []; 

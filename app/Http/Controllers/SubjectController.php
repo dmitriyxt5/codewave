@@ -16,7 +16,9 @@ class SubjectController extends Controller
         $subjects = Subject::with(['topics', 'commands', 'user'])
             ->get()
             ->filter(function ($subject) use ($user) {
-
+                if ($user->role === 'superadmin') {
+                    return true;
+                }
                 // Админ видит только свои предметы
                 if ($user->role === 'admin') {
                     return $subject->user_id === $user->id;
