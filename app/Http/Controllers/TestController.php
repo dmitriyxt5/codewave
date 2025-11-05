@@ -143,9 +143,14 @@ class TestController extends Controller
 
             $userId = $request->user()->id;
 
-            $command = Command::where('subject_id', $subjectId)
-                ->whereJsonContains('member_ids', $userId)
-                ->first();
+            $commands = Command::where('subject_id', $subjectId)->get();
+
+            $command = $commands->first(function ($cmd) use ($userId) {
+                $ids = json_decode($cmd->member_ids, true);
+                return in_array($userId, $ids ?? []);
+            });
+
+            // return response()->json(['command' => $command]); Test log for checking decoding "json"
 
             if ($command) {
                 $command->balls = ($command->balls ?? 0) + $score;
