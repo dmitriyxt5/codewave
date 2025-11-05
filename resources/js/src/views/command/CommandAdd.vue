@@ -32,7 +32,7 @@ const submit = async () => {
 		await axios.post('/api/commands', {
 			subject_id: route.params.subject_id,
 			leader_id: selectedLeader.value,
-			member_ids: selectedMembers.value
+			member_ids: [...selectedMembers.value, selectedLeader.value]
 		})
 		router
 			.push({
