@@ -141,7 +141,11 @@ class TestController extends Controller
 
             \Log::debug('Looking for command by subject_id', ['subject_id' => $subjectId]);
 
-            $command = Command::where('subject_id', $subjectId)->first();
+            $userId = $request->user()->id;
+
+            $command = Command::where('subject_id', $subjectId)
+                ->whereJsonContains('member_ids', $userId)
+                ->first();
 
             if ($command) {
                 $command->balls = ($command->balls ?? 0) + $score;

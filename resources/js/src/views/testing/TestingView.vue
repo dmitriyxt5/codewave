@@ -1,3 +1,97 @@
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { useAuthStore } from '@/stores/useAuthStore'
+import axios from 'axios'
+
+const authStore = useAuthStore()
+const route = useRoute()
+const questions = ref([])
+const currentIndex = ref(0)
+const selectedAnswer = ref(null)
+const userAnswers = ref([])
+const showResults = ref(false)
+const showPreviousResults = ref(false)
+const testResult = ref(null)
+const previousResult = ref(null)
+const hasPreviousAttempt = ref(false)
+const loading = ref(true)
+const error = ref(null)
+
+onMounted(async () => {
+	if (!authStore.isAuthenticated) {
+		error.value = 'Вы должны быть авторизованы'
+		loading.value = false
+		return
+	}
+
+	try {
+		console.log('Auth Token:', authStore.token)
+		axios.defaults.headers.common['Authorization'] = `Bearer ${authStore.token}`
+		const response = await axios.get(`api/topics/${route.params.topic_id}/test`)
+		const data = response.data
+
+		console.log('Test Data:', JSON.stringify(data, null, 2))
+		if (data.test && data.test.questions) {
+			questions.value = data.test.questions.map((q) => ({
+				...q,
+				answers: q.answers || []
+			}))
+			hasPreviousAttempt.value = data.has_previous_attempt
+			previousResult.value = data.previous_result
+			console.log('Previous Result:', JSON.stringify(previousResult.value, null, 2))
+		} else {
+			throw new Error('Неверный формат данных теста')
+		}
+	} catch (err) {
+		console.error('Ошибка при загрузке теста:', err)
+		error.value = err.response?.data?.message || `HTTP error! status: ${err.response?.status}`
+	} finally {
+		loading.value = false
+	}
+})
+
+const currentQuestion = computed(() => {
+	return questions.value[currentIndex.value] || { title: '', answers: [] }
+})
+
+const isLastQuestion = computed(() => currentIndex.value === questions.value.length - 1)
+
+const progressPercent = computed(() =>
+	Math.round(((currentIndex.value + 1) / questions.value.length) * 100)
+)
+
+async function nextQuestion() {
+	userAnswers.value[currentIndex.value] = selectedAnswer.value
+	console.log('User Answers:', userAnswers.value)
+
+	if (isLastQuestion.value) {
+		try {
+			const testId = questions.value[0]?.test_id
+			if (!testId) throw new Error('Не удалось определить ID теста')
+
+			console.log('Submitting answers:', userAnswers.value.filter(Boolean))
+			const response = await axios.post(`api/tests/${testId}/results`, {
+				answers: userAnswers.value.filter(Boolean)
+			})
+
+			const result = response.data
+			console.log('Test Result:', JSON.stringify(result, null, 2))
+			testResult.value = result
+			showResults.value = true
+			hasPreviousAttempt.value = true
+			previousResult.value = result
+		} catch (err) {
+			console.error('Ошибка при отправке ответов:', err)
+			error.value = err.response?.data?.message || `HTTP error! status: ${err.response?.status}`
+		}
+	} else {
+		currentIndex.value++
+		selectedAnswer.value = userAnswers.value[currentIndex.value] || null
+	}
+}
+</script>
+
 <template>
 	<div v-if="!authStore.isAuthenticated" class="text-center py-8 text-red-500">
 		Вы должны быть авторизованы, чтобы пройти тест.
@@ -134,97 +228,3 @@
 		</div>
 	</div>
 </template>
-
-<script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
-import { useAuthStore } from '@/stores/useAuthStore'
-import axios from 'axios'
-
-const authStore = useAuthStore()
-const route = useRoute()
-const questions = ref([])
-const currentIndex = ref(0)
-const selectedAnswer = ref(null)
-const userAnswers = ref([])
-const showResults = ref(false)
-const showPreviousResults = ref(false)
-const testResult = ref(null)
-const previousResult = ref(null)
-const hasPreviousAttempt = ref(false)
-const loading = ref(true)
-const error = ref(null)
-
-onMounted(async () => {
-	if (!authStore.isAuthenticated) {
-		error.value = 'Вы должны быть авторизованы'
-		loading.value = false
-		return
-	}
-
-	try {
-		console.log('Auth Token:', authStore.token)
-		axios.defaults.headers.common['Authorization'] = `Bearer ${authStore.token}`
-		const response = await axios.get(`api/topics/${route.params.topic_id}/test`)
-		const data = response.data
-
-		console.log('Test Data:', JSON.stringify(data, null, 2))
-		if (data.test && data.test.questions) {
-			questions.value = data.test.questions.map((q) => ({
-				...q,
-				answers: q.answers || []
-			}))
-			hasPreviousAttempt.value = data.has_previous_attempt
-			previousResult.value = data.previous_result
-			console.log('Previous Result:', JSON.stringify(previousResult.value, null, 2))
-		} else {
-			throw new Error('Неверный формат данных теста')
-		}
-	} catch (err) {
-		console.error('Ошибка при загрузке теста:', err)
-		error.value = err.response?.data?.message || `HTTP error! status: ${err.response?.status}`
-	} finally {
-		loading.value = false
-	}
-})
-
-const currentQuestion = computed(() => {
-	return questions.value[currentIndex.value] || { title: '', answers: [] }
-})
-
-const isLastQuestion = computed(() => currentIndex.value === questions.value.length - 1)
-
-const progressPercent = computed(() =>
-	Math.round(((currentIndex.value + 1) / questions.value.length) * 100)
-)
-
-async function nextQuestion() {
-	userAnswers.value[currentIndex.value] = selectedAnswer.value
-	console.log('User Answers:', userAnswers.value)
-
-	if (isLastQuestion.value) {
-		try {
-			const testId = questions.value[0]?.test_id
-			if (!testId) throw new Error('Не удалось определить ID теста')
-
-			console.log('Submitting answers:', userAnswers.value.filter(Boolean))
-			const response = await axios.post(`api/tests/${testId}/results`, {
-				answers: userAnswers.value.filter(Boolean)
-			})
-
-			const result = response.data
-			console.log('Test Result:', JSON.stringify(result, null, 2))
-			testResult.value = result
-			showResults.value = true
-			hasPreviousAttempt.value = true
-			previousResult.value = result
-		} catch (err) {
-			console.error('Ошибка при отправке ответов:', err)
-			error.value = err.response?.data?.message || `HTTP error! status: ${err.response?.status}`
-		}
-	} else {
-		currentIndex.value++
-		selectedAnswer.value = userAnswers.value[currentIndex.value] || null
-	}
-}
-</script>
