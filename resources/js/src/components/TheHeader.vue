@@ -19,10 +19,16 @@ watch(
 
 <template>
 	<header class="flex justify-between items-center w-full h-20 shadow-1 px-10 mb-10">
-		<div class="logo">
-			<router-link to="/subjects">
-				<img src="/icons/logo.svg" alt="Code Wave" />
-			</router-link>
+		<div class="flex items-center gap-3">
+			<div class="logo">
+				<router-link to="/subjects">
+					<img src="/icons/logo.svg" alt="Code Wave" />
+				</router-link>
+			</div>
+			<div>
+				<p class="text-blue-600 font-mono">Kostanay industrial and pedagogical college</p>
+				<p class="text-gray-600">Kostanay city, 35 Abai аvenue</p>
+			</div>
 		</div>
 		<TranslateSwitcher />
 		<div class="flex items-center gap-5">

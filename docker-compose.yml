@@ -2,14 +2,18 @@ services:
   nginx-proxy:
     image: jwilder/nginx-proxy
     container_name: nginx-proxy
-    ports: ["80:80","443:443"]
+    ports:
+      - '80:80'
+      - '443:443'
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./certs:/etc/nginx/certs
+      - ./certs:/etc/nginx/certs:rw
+      - ./acme:/etc/acme.sh:rw
       - ./vhost.d:/etc/nginx/vhost.d
       - ./html:/usr/share/nginx/html
       - ./nginx.conf:/etc/nginx/conf.d/custom.conf:ro
-    networks: [laravel-network]
+    networks:
+      - laravel-network
 
   letsencrypt:
     image: jrcs/letsencrypt-nginx-proxy-companion
@@ -18,11 +22,14 @@ services:
       - NGINX_PROXY_CONTAINER=nginx-proxy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./certs:/etc/nginx/certs
+      - ./certs:/etc/nginx/certs:rw
+      - ./acme:/etc/acme.sh:rw
       - ./vhost.d:/etc/nginx/vhost.d
       - ./html:/usr/share/nginx/html
-    depends_on: [nginx-proxy]
-    networks: [laravel-network]
+    depends_on:
+      - nginx-proxy
+    networks:
+      - laravel-network
 
   app:
     build:
@@ -34,9 +41,9 @@ services:
     volumes:
       - .:/var/www/html
     environment:
-      - VIRTUAL_HOST=skillvera.kz,www.skillvera.kz
+      - VIRTUAL_HOST=skillvera.kz
       - VIRTUAL_PORT=8000
-      - LETSENCRYPT_HOST=skillvera.kz,www.skillvera.kz
+      - LETSENCRYPT_HOST=skillvera.kz
       - LETSENCRYPT_EMAIL=sulleimenov@yandex.ru
       - APP_ENV=production
       - APP_DEBUG=false
@@ -44,8 +51,8 @@ services:
       - DB_PORT=3306
       - DB_DATABASE=college
       - DB_USERNAME=root
-      - DB_PASSWORD=
-    expose: ["8000"]
+      - DB_PASSWORD=erwoijwerio#(EJ)EIOJWewqoi=-=[]
+    expose: ['8000']
     command: php artisan serve --host=0.0.0.0 --port=8000
     depends_on:
       mysql:
@@ -57,14 +64,14 @@ services:
     container_name: laravel_mysql
     environment:
       - MYSQL_DATABASE=college
-      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_ROOT_PASSWORD=erwoijwerio#(EJ)EIOJWewqoi=-=[]
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
     volumes:
       - mysql-data:/var/lib/mysql
     ports:
-      - "127.0.0.1:3306:3306"
+      - '127.0.0.1:3306:3306'
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root"]
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -81,9 +88,9 @@ services:
       - LETSENCRYPT_HOST=pma.skillvera.kz
       - LETSENCRYPT_EMAIL=sulleimenov@yandex.ru
       - PMA_HOST=mysql
-      - PMA_USER=root
-      - PMA_PASSWORD=
-    expose: ["80"]
+    #      - PMA_USER=root
+    #      - PMA_PASSWORD=erwoijwerio#(EJ)EIOJWewqoi=-=[]
+    expose: ['80']
     depends_on:
       mysql:
         condition: service_healthy

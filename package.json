@@ -21,6 +21,7 @@
     "dependencies": {
         "@formkit/auto-animate": "^0.8.2",
         "@kangc/v-md-editor": "^2.2.4",
+        "@splidejs/vue-splide": "^0.6.12",
         "@vue/eslint-config-prettier": "^9.0.0",
         "editor.md": "^1.5.0",
         "highlight.js": "^11.11.1",
