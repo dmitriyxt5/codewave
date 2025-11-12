@@ -2,32 +2,43 @@
 import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/useAuthStore'
+
 import Header from '@/components/TheHeader.vue'
 import Sidebar from '@/components/TheSidebar.vue'
 import Navigation from '@/components/Navigation.vue'
+import Slider from '../Components/Slider.vue'
+
 import 'highlight.js/styles/monokai.css'
 import '@splidejs/vue-splide/css/sea-green'
-import Slider from '../Components/Slider.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
 
-authStore.token && authStore.getProfile()
-
-// Проверяем, что текущий маршрут — ровно "/subjects", без вложенных путей
-const isSubjectsRoot = computed(() => router.currentRoute.value.fullPath === '/subjects')
-
-// Для отладки
+// Загружаем профиль, если есть токен
 onMounted(() => {
+	if (authStore.token) authStore.getProfile()
 	console.log('Current fullPath:', router.currentRoute.value.fullPath)
 	console.log('Route name:', router.currentRoute.value.name)
 })
+
+// Определяем текущие состояния интерфейса
+const isSubjectsRoot = computed(() => router.currentRoute.value.fullPath === '/subjects')
+const isLoginPage = computed(() => {
+	const name = router.currentRoute.value.name
+	return name === 'login' || name === 'register'
+})
+const isAuthenticated = computed(() => authStore.isAuthenticated)
 </script>
 
 <template>
-	<div v-if="!isLoginPage">
-		<Header />
+	<!-- Если не авторизован или на странице логина — показываем только контент -->
+	<div v-if="!isAuthenticated || isLoginPage">
+		<router-view />
+	</div>
 
+	<!-- Основной интерфейс после авторизации -->
+	<div v-else>
+		<Header />
 		<!-- Слайдер только на корневой странице subjects -->
 		<Slider v-if="isSubjectsRoot" />
 
@@ -38,12 +49,8 @@ onMounted(() => {
 					<h1 class="text-xl">{{ router.currentRoute.value.meta.title }}</h1>
 					<Navigation />
 				</div>
-				<router-view></router-view>
+				<router-view />
 			</main>
 		</div>
-	</div>
-
-	<div v-else>
-		<router-view></router-view>
 	</div>
 </template>

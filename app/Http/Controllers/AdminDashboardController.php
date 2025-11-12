@@ -20,7 +20,7 @@ class AdminDashboardController extends Controller
         $period = $request->query('period', 1);
         $startDate = now()->subDays($period);
 
-        $studentsCount = User::where('role', 'student')->count();
+        $studentsCount = User::where('role', 'user')->count();
         $adminsCount = User::where('role', 'admin')->count();
         $topicsCount = Topic::count();
         $testsCount = \App\Models\Test::count();
