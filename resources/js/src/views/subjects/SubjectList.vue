@@ -5,7 +5,7 @@ import { useSubjectsStore } from '@/stores/useSubjectStore'
 import { useAuthStore } from '@/stores/useAuthStore'
 import Card from '@/components/TheCard.vue'
 // import LoadingCard from '@/components/skeleton/LoadingCard.vue'
-
+import Slider from './../../../Components/Slider.vue'
 const subjectsStore = useSubjectsStore()
 import { useRouter } from 'vue-router'
 const router = useRouter()
@@ -28,7 +28,10 @@ onMounted(() => {
 </script>
 
 <template>
+	<!-- <Slider /> -->
+
 	<router-view></router-view>
+
 	<button
 		@click="router.push('/subjects_create')"
 		v-if="auth.isAdmin"
@@ -39,6 +42,8 @@ onMounted(() => {
 	<button
 		@click="router.push('/student_create')"
 		v-if="auth.isAdmin"
+		data-en="Hello"
+		data-ru="выавы "
 		class="p-2 ml-4 px-12 text-white rounded-sm bg-blue-500 mb-4"
 	>
 		Зарегистрировать студента

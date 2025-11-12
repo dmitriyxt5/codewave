@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\GradesController;
+use App\Http\Controllers\AdminDashboardController;
 
 use App\Http\Controllers\TopicController;
 use Illuminate\Http\Request;
@@ -75,4 +76,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/commands/{id}/upgrade-photo', [CommandController::class, 'upgradePhoto']);
     Route::post('/commands/{id}/spend-coins-upgrade', [CommandController::class, 'spendCoinsAndUpgrade']);
     Route::get('/subjects/{subject_id}/command-image', [CommandController::class, 'getTeamImage']); // New route
+
+
+    Route::get('/admin/dashboard', [AdminDashboardController::class, 'index']);
+    Route::get('/admin/subject/{id}/commands', [AdminDashboardController::class, 'showSubjectTeams']);
+
 });

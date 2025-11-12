@@ -34,7 +34,7 @@ watch(
 		<div class="flex items-center gap-5">
 			<div class="flex items-center gap-4">
 				<img class="w-12 h-12 rounded-full bg-gray-30 object-cover" src="/temp-card.jpg" alt="" />
-				<div>Привет, {{ authStore.firstname }}</div>
+				<div data-en="Hello">Привет, {{ authStore.firstname }}</div>
 			</div>
 			<button @click="handleLogout" class="cursor-pointer">
 				<img src="/icons/login.svg" alt="logout" />

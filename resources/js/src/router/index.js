@@ -133,7 +133,14 @@ const routes = [
 		name: 'journal',
 		component: JournalView,
 		meta: { requiresAuth: true, title: 'Журнал' }
+	},
+	{
+		path: '/admin/dashboard',
+		name: 'admin_dashboard',
+		component: () => import('@/views/admin/AdminDashboard.vue'),
+		meta: { requiresAuth: true, title: 'Админ-панель', role: 'admin' }
 	}
+
 	// {
 	// 	path: '/subjects/:subject_id/topic/:topic_id/command_create',
 	// 	name: 'command_create',

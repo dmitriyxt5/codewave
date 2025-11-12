@@ -30,4 +30,10 @@ class Command extends Model
         $memberIds = is_string($this->member_ids) ? json_decode($this->member_ids, true) : $this->member_ids;
         return User::whereIn('id', $memberIds ?? [])->get();
     }
+
+    public function subject()
+{
+    return $this->belongsTo(Subject::class);
+}
+
 }

@@ -5,35 +5,39 @@ import { useAuthStore } from '@/stores/useAuthStore'
 
 const route = useRoute()
 const authStore = useAuthStore()
+
 onMounted(() => {
 	console.log(route.name, 'route name')
 })
-const isThemePage = computed(
-	() =>
-		route.name === 'lesson_detail_description' ||
-		route.name === 'lesson_criterion' ||
-		route.name === 'lesson_testing' ||
-		route.name === 'homework_view' ||
-		route.name === 'homework_check' ||
-		route.name === 'lection_show' ||
-		route.name === 'lection_create' ||
-		route.name === 'lection' ||
-		route.name === 'Command' ||
-		route.name === 'command_create' ||
-		route.name === 'register'
-	// route.name === 'subject'
+
+// --- Определяем, где находимся ---
+const isThemePage = computed(() =>
+	[
+		'lesson_detail_description',
+		'lesson_criterion',
+		'lesson_testing',
+		'homework_view',
+		'homework_check',
+		'lection_show',
+		'lection_create',
+		'lection',
+		'Command',
+		'command_create',
+		'register'
+	].includes(route.name)
 )
+
 const isModulesPage = computed(() => route.name === 'Модули')
 const isThemeListPage = computed(() => route.name === 'subjects_list')
 const isCommandPage = computed(() => route.name === 'Command')
 
+// --- Отслеживаем маршрут для отладки ---
 watch(
 	() => route.name,
-	() => {
-		console.log(route.name, 'route name')
-	}
+	() => console.log(route.name, 'route name')
 )
 
+// --- Пример статуса этапов ---
 const completedStages = ref({
 	Команда: true,
 	'Критерий оценивания': false,
@@ -44,26 +48,29 @@ const completedStages = ref({
 	Рефлексия: false
 })
 
+// --- Формируем ссылки для меню ---
 const links = computed(() => {
 	const commonLinks = [
 		{ to: '/subjects', icon: 'link.svg', label: 'Модули', extraClass: 'filter-gray-400' }
 	]
 
-	// console.log(isModulesPage.value, '123')
-	if (isModulesPage.value) {
-		return commonLinks
+	// ✅ добавляем пункт «Админ панель» только если роль администратора
+	if (authStore.isAdmin) {
+		commonLinks.push({
+			to: '/admin/dashboard',
+			icon: 'link.svg',
+			label: 'Админ панель',
+			extraClass: 'filter-gray-400'
+		})
 	}
+
+	if (isModulesPage.value) return commonLinks
 
 	if (isThemeListPage.value) {
 		return [
-			{ to: '/subjects', icon: 'link.svg', label: 'Модули', extraClass: 'filter-gray-400' },
+			...commonLinks,
 			{
-				to: {
-					name: 'Command',
-					params: {
-						subject_id: route.params.subject_id
-					}
-				},
+				to: { name: 'Command', params: { subject_id: route.params.subject_id } },
 				icon: 'link.svg',
 				label: 'Команда',
 				extraClass: 'filter-gray-400'
@@ -73,25 +80,15 @@ const links = computed(() => {
 
 	if (isCommandPage.value) {
 		return [
-			{ to: '/subjects', icon: 'link.svg', label: 'Модули', extraClass: 'filter-gray-400' },
+			...commonLinks,
 			{
-				to: {
-					name: 'subjects_list',
-					params: {
-						subject_id: route.params.subject_id
-					}
-				},
+				to: { name: 'subjects_list', params: { subject_id: route.params.subject_id } },
 				icon: 'link.svg',
 				label: 'Список тем',
 				extraClass: 'filter-gray-400'
 			},
 			{
-				to: {
-					name: 'Command',
-					params: {
-						subject_id: route.params.subject_id
-					}
-				},
+				to: { name: 'Command', params: { subject_id: route.params.subject_id } },
 				icon: 'link.svg',
 				label: 'Команда',
 				extraClass: 'filter-gray-400'
@@ -101,63 +98,13 @@ const links = computed(() => {
 
 	if (isThemePage.value) {
 		return [
+			...commonLinks,
 			{
-				to: {
-					name: 'subjects_list',
-					params: {
-						subject_id: route.params.subject_id
-					}
-				},
+				to: { name: 'subjects_list', params: { subject_id: route.params.subject_id } },
 				icon: 'link.svg',
 				label: 'Список тем',
 				extraClass: 'filter-gray-400'
 			},
-			// {
-			// 	to: {
-			// 		name: 'Command',
-			// 		params: {
-			// 			subject_id: route.params.subject_id
-			// 			// topic_id: route.params.topic_id
-			// 		}
-			// 	},
-			// 	icon: 'test.svg',
-			// 	label: 'Команда'
-			// },
-			{
-				to: {
-					name: 'lesson_detail_description',
-					params: {
-						subject_id: route.params.subject_id
-						// topic_id: route.params.topic_id
-					}
-				},
-				icon: 'descr.svg',
-				label: 'Описание урока'
-			},
-			// {
-			// 	to: {
-			// 		name: 'lesson_criterion',
-			// 		params: {
-			// 			subject_id: route.params.subject_id,
-			// 			topic_id: route.params.topic_id
-			// 		}
-			// 	},
-			// 	icon: 'pool.svg',
-			// 	label: 'Критерий оценивания',
-			// 	extraClass: completedStages.value['Критерий оценивания'] ? '' : 'text-gray-400 saturate-0'
-			// },
-			// {
-			// 	to: {
-			// 		name: authStore.role === 'admin' ? 'homework_check' : 'homework_view',
-			// 		params: {
-			// 			subject_id: route.params.subject_id,
-			// 			topic_id: route.params.topic_id
-			// 		}
-			// 	},
-			// 	icon: 'homework.svg',
-			// 	label: 'Домашнее задание',
-			// 	extraClass: completedStages.value['Домашнее задание'] ? '' : 'text-gray-400 saturate-0'
-			// },
 			{
 				to: 'lection',
 				icon: 'book.svg',
@@ -165,37 +112,11 @@ const links = computed(() => {
 				extraClass: completedStages.value['Лекция'] ? '' : 'text-gray-400 saturate-0'
 			},
 			{
-				to: {
-					name: 'lesson_testing',
-					params: {
-						subject_id: route.params.subject_id
-						// topic_id: route.params.topic_id
-					}
-				},
+				to: { name: 'lesson_testing', params: { subject_id: route.params.subject_id } },
 				icon: 'test.svg',
 				label: 'Тестирование',
 				extraClass: completedStages.value['Тестирование'] ? '' : 'text-gray-400 saturate-0'
 			}
-			// {
-			// 	to: {
-			// 		name: 'command'
-			// 	},
-			// 	icon: 'test.svg',
-			// 	label: 'Команда',
-			// 	extraClass: completedStages.value['Команда'] ? '' : 'text-gray-400 saturate-0'
-			// },
-			// {
-			// 	to: '#',
-			// 	icon: 'practical.svg',
-			// 	label: 'Практическое задание',
-			// 	extraClass: completedStages.value['Практическое задание'] ? '' : 'text-gray-400 saturate-0'
-			// },
-			// {
-			// 	to: '#',
-			// 	icon: 'pool.svg',
-			// 	label: 'Рефлексия',
-			// 	extraClass: completedStages.value['Рефлексия'] ? '' : 'text-gray-400 saturate-0'
-			// }
 		]
 	}
 
