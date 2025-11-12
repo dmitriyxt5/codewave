@@ -9,6 +9,7 @@ const authStore = useAuthStore()
 
 const handleLogout = () => {
 	authStore.logout()
+	router.push({ name: 'login' })
 }
 
 watch(
