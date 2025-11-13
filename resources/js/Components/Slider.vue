@@ -9,30 +9,30 @@
 			<SplideSlide class="flex justify-center items-center">
 				<img
 					src="/images/slider/1.jpeg"
-					alt="Образец 1"
+					alt="Фото 1"
 					class="w-full h-auto max-h-96 object-contain rounded-lg"
 				/>
 			</SplideSlide>
 
 			<!-- Слайд 2 -->
-			<SplideSlide class="flex justify-center items-center">
+			<!-- <SplideSlide class="flex justify-center items-center">
 				<img
 					src="/images/slider/2.jpeg"
 					alt="Образец 2"
+					class="w-full h-auto max-h-96 object-contain rounded-lg"
+				/>
+			</SplideSlide> -->
+			<SplideSlide class="flex justify-center items-center">
+				<img
+					src="/images/slider/4.jpeg"
+					alt="Фото 2"
 					class="w-full h-auto max-h-96 object-contain rounded-lg"
 				/>
 			</SplideSlide>
 			<SplideSlide class="flex justify-center items-center">
 				<img
 					src="/images/slider/3.jpeg"
-					alt="Образец 2"
-					class="w-full h-auto max-h-96 object-contain rounded-lg"
-				/>
-			</SplideSlide>
-			<SplideSlide class="flex justify-center items-center">
-				<img
-					src="/images/slider/4.jpeg"
-					alt="Образец 2"
+					alt="Фото 3"
 					class="w-full h-auto max-h-96 object-contain rounded-lg"
 				/>
 			</SplideSlide>

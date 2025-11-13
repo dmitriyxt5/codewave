@@ -22,7 +22,7 @@ const shopItems = ref([
 	{
 		id: 2,
 		name: 'Золотой барс',
-		price: 200,
+		price: 2000,
 		image: '/images/animals/golden_bars.jpg',
 		owned: false
 	},
