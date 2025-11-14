@@ -7,23 +7,9 @@ use Illuminate\Http\Request;
 
 class LectionController extends Controller
 {
-    public function show($subject_id)
-    {
-        $lection = Lection::where('subject_id', $subject_id)->first();
-
-        if (!$lection) {
-            return response()->json(['message' => 'Лекция не найдена'], 404);
-        }
-
-        return response()->json(['lection' => $lection]);
-    }
-
+    // Получить лекцию для subject + topic (общую)
     public function find($subject_id, $topic_id)
     {
-        if (!is_numeric($subject_id) || !is_numeric($topic_id)) {
-            return response()->json(['error' => 'Invalid subject or topic ID'], 400);
-        }
-
         $lection = Lection::where('subject_id', $subject_id)
             ->where('topic_id', $topic_id)
             ->first();
@@ -38,6 +24,7 @@ class LectionController extends Controller
         ]);
     }
 
+    // Создать общую лекцию
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -46,24 +33,18 @@ class LectionController extends Controller
             'content' => 'required|string',
         ]);
 
-        // ✅ Учитываем subject + topic + user, чтобы не затереть другие лекции
-        $existingLection = Lection::where('subject_id', $validated['subject_id'])
+        // Проверяем существующую общую лекцию
+        $existing = Lection::where('subject_id', $validated['subject_id'])
             ->where('topic_id', $validated['topic_id'])
-            ->where('user_id', auth()->id() ?? 1)
             ->first();
 
-        if ($existingLection) {
-            return response()->json([
-                'message' => 'Лекция для этой темы уже существует',
-                'existing_lection' => $existingLection,
-                'action_required' => 'delete_first'
-            ], 409);
+        if ($existing) {
+            return response()->json(['message' => 'Лекция уже существует'], 409);
         }
 
         $lection = Lection::create([
             'subject_id' => $validated['subject_id'],
             'topic_id' => $validated['topic_id'],
-            'user_id' => auth()->id() ?? 1,
             'content' => $validated['content'],
         ]);
 
@@ -73,11 +54,11 @@ class LectionController extends Controller
         ], 201);
     }
 
+    // Удалить общую лекцию
     public function destroy($subject_id, $topic_id)
     {
         $lection = Lection::where('subject_id', $subject_id)
             ->where('topic_id', $topic_id)
-            ->where('user_id', auth()->id() ?? 1)
             ->first();
 
         if (!$lection) {
@@ -88,8 +69,6 @@ class LectionController extends Controller
 
         return response()->json([
             'message' => 'Лекция успешно удалена',
-            'subject_id' => $subject_id,
-            'topic_id' => $topic_id
         ]);
     }
 }
