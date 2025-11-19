@@ -51,7 +51,8 @@ const completedStages = ref({
 // --- Формируем ссылки для меню ---
 const links = computed(() => {
 	const commonLinks = [
-		{ to: '/subjects', icon: 'link.svg', label: 'Модули', extraClass: 'filter-gray-400' }
+		{ to: '/subjects', icon: 'link.svg', label: 'Модули', extraClass: 'filter-gray-400' },
+		{ to: '/bars', icon: 'link.svg', label: 'Каталог барсов', extraClass: 'filter-gray-400' }
 	]
 
 	// ✅ добавляем пункт «Админ панель» только если роль администратора

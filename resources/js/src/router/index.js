@@ -8,6 +8,7 @@ import SubjectList from '@/views/subjects/SubjectList.vue'
 import SubjectCreate from '@/views/subjects/SubjectCreate.vue'
 import StudentCreate from '@/views/subjects/StudentCreate.vue'
 import JournalView from '@/views/journal/JournalView.vue'
+import BarsView from '@/views/bars/BarsView.vue'
 import SubjectEdit from '@/views/subjects/SubjectEdit.vue'
 import LessonList from '@/views/lessons/LessonList.vue'
 import LessonDetail from '@/views/lessons/LessonDetail.vue'
@@ -139,6 +140,12 @@ const routes = [
 		name: 'admin_dashboard',
 		component: () => import('@/views/admin/AdminDashboard.vue'),
 		meta: { requiresAuth: true, title: 'Админ-панель', role: 'admin' }
+	},
+	{
+		path: '/bars',
+		name: 'bars',
+		component: BarsView,
+		meta: { requiresAuth: true, title: 'Барсы' }
 	}
 
 	// {
