@@ -2,8 +2,6 @@
 import { useCommandStore } from '@/stores/useCommandStore'
 
 const commandStore = useCommandStore()
-
-// Просто читаем общий список барсов
 const items = commandStore.shopItems
 </script>
 
@@ -15,14 +13,15 @@ const items = commandStore.shopItems
 			<div
 				v-for="item in items"
 				:key="item.id"
-				class="border rounded-lg p-3 hover:shadow transition"
+				class="border rounded-xl p-3 hover:shadow transition bg-white"
 			>
-				<img
-					:src="item.image"
-					:alt="item.name"
-					class="w-full aspect-square object-cover rounded-md mb-2"
-				/>
-				<h3 class="font-semibold">{{ item.name }}</h3>
+				<div class="w-full bg-gray-50 rounded-lg overflow-hidden">
+					<img :src="item.image" :alt="item.name" class="w-full h-auto object-contain block" />
+				</div>
+
+				<h3 class="font-semibold mt-2">
+					{{ item.name }}
+				</h3>
 
 				<p class="text-sm text-gray-600 mt-1">
 					Цена:
