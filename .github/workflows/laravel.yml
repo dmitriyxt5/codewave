@@ -28,7 +28,12 @@ jobs:
           remote_user: ${{ secrets.SERVER_USER }}
           remote_key: ${{ secrets.SERVER_SSH_KEY }}
         
-
+      
+      - name: Add SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/server_key
+          chmod 600 ~/.ssh/server_key
 
       - name: Run commands on server
         run: |
