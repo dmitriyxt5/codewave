@@ -5,7 +5,7 @@
 
 	<div v-else class="w-full rounded-lg shadow-1 px-8 py-7">
 		<div v-if="test" class="mb-6">
-			<h2 class="text-xl font-semibold text-gray-800 mb-4">Существующий тест</h2>
+			<h2 class="text-xl font-semibold text-gray-800 mb-4">Существующий тест.</h2>
 			<p class="mb-4">
 				Тест для данной темы уже создан. Вы можете просмотреть вопросы или удалить тест.
 			</p>
