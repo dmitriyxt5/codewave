@@ -2,7 +2,7 @@ name: Deploy Laravel
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ['main']
 
 jobs:
   deploy:
@@ -27,8 +27,7 @@ jobs:
           remote_host: ${{ secrets.SERVER_HOST }}
           remote_user: ${{ secrets.SERVER_USER }}
           remote_key: ${{ secrets.SERVER_SSH_KEY }}
-        
-      
+
       - name: Add SSH key
         run: |
           mkdir -p ~/.ssh
