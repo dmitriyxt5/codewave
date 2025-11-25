@@ -19,7 +19,7 @@ jobs:
             sh -c "npm install && npm run build"
 
       - name: Copy files to server
-        uses: burnett01/rsync-deployments@v2.1
+        uses: burnett01/rsync-deployments@v1.1
         with:
           switches: -avz --delete
           path: ./
@@ -27,6 +27,7 @@ jobs:
           remote_host: ${{ secrets.SERVER_HOST }}
           remote_user: ${{ secrets.SERVER_USER }}
           remote_key: ${{ secrets.SERVER_SSH_KEY }}
+
 
       - name: Run commands on server
         run: |
