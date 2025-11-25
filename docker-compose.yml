@@ -1,3 +1,5 @@
+version: '3.9'
+
 services:
   nginx-proxy:
     image: jwilder/nginx-proxy
@@ -7,10 +9,10 @@ services:
       - '443:443'
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./certs:/etc/nginx/certs:rw
-      - ./acme:/etc/acme.sh:rw
-      - ./vhost.d:/etc/nginx/vhost.d
-      - ./html:/usr/share/nginx/html
+      - ./data/certs:/etc/nginx/certs:rw
+      - ./data/acme:/etc/acme.sh:rw
+      - ./data/vhost.d:/etc/nginx/vhost.d
+      - ./data/html:/usr/share/nginx/html
       - ./nginx.conf:/etc/nginx/conf.d/custom.conf:ro
     networks:
       - laravel-network
@@ -22,10 +24,10 @@ services:
       - NGINX_PROXY_CONTAINER=nginx-proxy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./certs:/etc/nginx/certs:rw
-      - ./acme:/etc/acme.sh:rw
-      - ./vhost.d:/etc/nginx/vhost.d
-      - ./html:/usr/share/nginx/html
+      - ./data/certs:/etc/nginx/certs:rw
+      - ./data/acme:/etc/acme.sh:rw
+      - ./data/vhost.d:/etc/nginx/vhost.d
+      - ./data/html:/usr/share/nginx/html
     depends_on:
       - nginx-proxy
     networks:
@@ -38,63 +40,68 @@ services:
     image: laravel-app
     container_name: laravel_app
     working_dir: /var/www/html
-    volumes:
-      - .:/var/www/html
     environment:
-      - VIRTUAL_HOST=skillvera.kz
-      - VIRTUAL_PORT=8000
-      - LETSENCRYPT_HOST=skillvera.kz
-      - LETSENCRYPT_EMAIL=sulleimenov@yandex.ru
-      - APP_ENV=production
-      - APP_DEBUG=false
-      - DB_HOST=mysql
-      - DB_PORT=3306
-      - DB_DATABASE=college
-      - DB_USERNAME=root
-      - DB_PASSWORD=erwoijwerio#(EJ)EIOJWewqoi=-=[]
-    expose: ['8000']
+      APP_ENV: ${APP_ENV}
+      APP_DEBUG: ${APP_DEBUG}
+      VIRTUAL_HOST: ${APP_URL_DOMAIN}
+      VIRTUAL_PORT: 8000
+      LETSENCRYPT_HOST: ${APP_URL_DOMAIN}
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+    expose:
+      - '8000'
     command: php artisan serve --host=0.0.0.0 --port=8000
     depends_on:
       mysql:
         condition: service_healthy
-    networks: [laravel-network]
+    networks:
+      - laravel-network
 
   mysql:
     image: mysql:8.0
     container_name: laravel_mysql
     environment:
-      - MYSQL_DATABASE=college
-      - MYSQL_ROOT_PASSWORD=erwoijwerio#(EJ)EIOJWewqoi=-=[]
-      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - mysql-data:/var/lib/mysql
     ports:
       - '127.0.0.1:3306:3306'
     healthcheck:
-      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root']
+      test:
+        ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-u', '${DB_USERNAME}', '-p${DB_PASSWORD}']
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
     command: --default-authentication-plugin=mysql_native_password
-    networks: [laravel-network]
+    networks:
+      - laravel-network
 
   phpmyadmin:
     image: phpmyadmin:latest
     container_name: laravel_phpmyadmin
     environment:
-      - VIRTUAL_HOST=pma.skillvera.kz
-      - VIRTUAL_PORT=80
-      - LETSENCRYPT_HOST=pma.skillvera.kz
-      - LETSENCRYPT_EMAIL=sulleimenov@yandex.ru
-      - PMA_HOST=mysql
-    #      - PMA_USER=root
-    #      - PMA_PASSWORD=erwoijwerio#(EJ)EIOJWewqoi=-=[]
-    expose: ['80']
+      VIRTUAL_HOST: ${PMA_DOMAIN}
+      VIRTUAL_PORT: 80
+      LETSENCRYPT_HOST: ${PMA_DOMAIN}
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
+      PMA_HOST: mysql
+      PMA_USER: ${DB_USERNAME}
+      PMA_PASSWORD: ${DB_PASSWORD}
+    expose:
+      - '80'
     depends_on:
       mysql:
         condition: service_healthy
-    networks: [laravel-network]
+    networks:
+      - laravel-network
 
 volumes:
   mysql-data:
