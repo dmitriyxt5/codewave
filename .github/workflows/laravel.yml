@@ -1,0 +1,39 @@
+name: Deploy Laravel
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build assets
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/app \
+            -w /app node:20-alpine \
+            sh -c "npm install && npm run build"
+
+      - name: Copy files to server
+        uses: burnett01/rsync-deployments@v2.1
+        with:
+          switches: -avz --delete
+          path: ./
+          remote_path: /var/www/yourapp
+          remote_host: ${{ secrets.SERVER_HOST }}
+          remote_user: ${{ secrets.SERVER_USER }}
+          remote_key: ${{ secrets.SERVER_SSH_KEY }}
+
+      - name: Run commands on server
+        run: |
+          ssh -i ~/.ssh/server_key \
+            -o StrictHostKeyChecking=no \
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "
+              cd /var/www/yourapp &&
+              docker-compose down &&
+              docker-compose up --build -d
+            "
