@@ -18,23 +18,27 @@ jobs:
             -w /app node:20-alpine \
             sh -c "npm install && npm run build"
 
-      - name: Copy files to server
-        uses: burnett01/rsync-deployments@master
-        with:
-          switches: -avz --delete --exclude=".env" --exclude="data/"
-          path: ./
-          remote_path: /var/www/codewave
-          remote_host: ${{ secrets.SERVER_HOST }}
-          remote_user: ${{ secrets.SERVER_USER }}
-          remote_key: ${{ secrets.SERVER_SSH_KEY }}
-
       - name: Add SSH key
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/server_key
           chmod 600 ~/.ssh/server_key
 
-      - name: Run commands on server
+      - name: Copy files to server (rsync)
+        uses: burnett01/rsync-deployments@master
+        with:
+          switches: -avz --delete \
+            --exclude=".env" \
+            --exclude="data/" \
+            --exclude="storage/framework/sessions/" \
+            --exclude="storage/framework/views/"
+          path: ./
+          remote_path: /var/www/codewave
+          remote_host: ${{ secrets.SERVER_HOST }}
+          remote_user: ${{ secrets.SERVER_USER }}
+          remote_key: ${{ secrets.SERVER_SSH_KEY }}
+
+      - name: Restart Docker on server
         run: |
           ssh -i ~/.ssh/server_key \
             -o StrictHostKeyChecking=no \
