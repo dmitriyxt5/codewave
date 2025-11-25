@@ -21,7 +21,7 @@ jobs:
       - name: Copy files to server
         uses: burnett01/rsync-deployments@master
         with:
-          switches: >
+          switches: |
             -avz --delete
             --exclude=acme/
             --exclude=vhost.d/
