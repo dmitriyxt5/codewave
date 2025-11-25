@@ -21,7 +21,7 @@ jobs:
       - name: Copy files to server
         uses: burnett01/rsync-deployments@master
         with:
-        switches: -avz --delete --exclude=".env" --exclude="data/" 
+          switches: -avz --delete --exclude=".env" --exclude="data/"
           path: ./
           remote_path: /var/www/codewave
           remote_host: ${{ secrets.SERVER_HOST }}
