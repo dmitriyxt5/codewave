@@ -23,7 +23,7 @@ jobs:
         with:
           switches: -avz --delete
           path: ./
-          remote_path: /var/www/yourapp
+          remote_path: /var/www/codewave
           remote_host: ${{ secrets.SERVER_HOST }}
           remote_user: ${{ secrets.SERVER_USER }}
           remote_key: ${{ secrets.SERVER_SSH_KEY }}
@@ -35,7 +35,7 @@ jobs:
           ssh -i ~/.ssh/server_key \
             -o StrictHostKeyChecking=no \
             ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "
-              cd /var/www/yourapp &&
+              cd /var/www/codewave &&
               docker-compose down &&
               docker-compose up --build -d
             "
