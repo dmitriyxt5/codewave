@@ -40,6 +40,8 @@ services:
     image: laravel-app
     container_name: laravel_app
     working_dir: /var/www/html
+    env_file:
+      - .env
     environment:
       APP_ENV: ${APP_ENV}
       APP_DEBUG: ${APP_DEBUG}
@@ -64,6 +66,8 @@ services:
   mysql:
     image: mysql:8.0
     container_name: laravel_mysql
+    env_file:
+      - .env
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
@@ -87,6 +91,8 @@ services:
   phpmyadmin:
     image: phpmyadmin:latest
     container_name: laravel_phpmyadmin
+    env_file:
+      - .env
     environment:
       VIRTUAL_HOST: ${PMA_DOMAIN}
       VIRTUAL_PORT: 80
