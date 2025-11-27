@@ -74,7 +74,7 @@ const handleDelete = async (id) => {
 					<!-- <div class="basis-1/12"></div> -->
 				</router-link>
 				<div
-					v-admin
+					v-if="authStore.isAdmin"
 					@click="handleDelete(topic.id)"
 					class="basis-1/12 absolute right-0 cursor-pointer w-8 h-8 flex items-center rounded-lg justify-center"
 				>
