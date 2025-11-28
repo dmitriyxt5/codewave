@@ -65,6 +65,8 @@ services:
         condition: service_healthy
     networks:
       - laravel-network
+    volumes:
+      - ./:/var/www/html
 
   mysql:
     image: mysql:8.0
