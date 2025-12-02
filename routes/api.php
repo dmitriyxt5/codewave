@@ -64,6 +64,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/subjects/{subject_id}/command', [CommandController::class, 'show']);
     Route::get('/subjects/{subject_id}/command-image', [CommandController::class, 'getTeamImage']);
 
+    Route::get('/subjects/{subject_id}/topic/{topic_id}/lection_show', [LectionController::class, 'find']);
+    Route::get('/subjects/{subject}/lection', [LectionController::class, 'show']);
 
     /*
     |--------------------------------------------------------------------------
