@@ -109,6 +109,14 @@ class TopicController extends Controller
      */
     public function destroy($id)
     {
+        $topic = Topic::find($id);
+
+        if ($request->user()->role === 'admin' &&
+            $topic->subject->user_id !== $request->user()->id
+        ) {
+            return response()->json(['error' => 'Forbidden'], 403);
+        }
+
         $item = Topic::find($id);
         $item->delete();
 

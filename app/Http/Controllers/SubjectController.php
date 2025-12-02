@@ -63,7 +63,10 @@ class SubjectController extends Controller
             'image' => 'nullable|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
+
+
         $imagePath = $request->file('image')->store('images', 'public');
+
 
         $subject = Subject::create([
             'name' => $request->name,
@@ -71,6 +74,9 @@ class SubjectController extends Controller
             'image' => $imagePath,
             'user_id' => $request->user()->id
         ]);
+        if ($request->user()->role === 'admin' && $subject->user_id !== $request->user()->id) {
+            return response()->json(['error' => 'Forbidden'], 403);
+        }
 
         return response()->json($subject, 201);
     }
@@ -95,6 +101,11 @@ class SubjectController extends Controller
             'description' => 'required|string',
             'image' => 'nullable|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
+        if ($request->user()->role === 'admin' && $subject->user_id !== $request->user()->id) {
+            return response()->json(['error' => 'Forbidden'], 403);
+        }
+
+
 
         if ($request->hasFile('image')) {
             if ($subject->image && Storage::disk('public')->exists($subject->image)) {

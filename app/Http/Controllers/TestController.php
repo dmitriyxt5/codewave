@@ -228,6 +228,7 @@ class TestController extends Controller
         if (!Auth::check()) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+        
 
         Log::info('Authenticated user', ['user_id' => Auth::id(), 'user' => Auth::user()]);
 
@@ -235,6 +236,12 @@ class TestController extends Controller
         if (!$test) {
             return response()->json(['error' => 'Test not found'], 404);
         }
+        if ($request->user()->role === 'admin' &&
+            $test->user_id !== $request->user()->id
+        ) {
+            return response()->json(['error' => 'Forbidden'], 403);
+        }
+
 
         foreach ($test->questions as $question) {
             $question->answers()->delete();
