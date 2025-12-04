@@ -105,7 +105,7 @@ Route::middleware('auth:sanctum')->group(function () {
     | SUPERADMIN routes only
     |--------------------------------------------------------------------------
     */
-    Route::middleware('role:superadmin')->group(function () {
+    Route::middleware('role:admin,superadmin')->group(function () {
 
         Route::delete('/subjects/{id}', [SubjectController::class, 'destroy']);
 

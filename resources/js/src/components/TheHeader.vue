@@ -31,7 +31,7 @@ watch(
 				<p class="text-gray-600">Kostanay city, 35 Abai аvenue</p>
 			</div>
 		</div>
-		<TranslateSwitcher />
+		<TranslateSwitcher class="flex ml-auto mr-4" />
 		<div class="flex items-center gap-5">
 			<div class="flex items-center gap-4">
 				<img class="w-12 h-12 rounded-full bg-gray-30 object-cover" src="/temp-card.jpg" alt="" />

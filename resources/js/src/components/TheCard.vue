@@ -3,6 +3,9 @@ import { useSubjectsStore } from '@/stores/useSubjectStore'
 import { useTopicsStore } from '@/stores/useTopicStore'
 import { onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useAuthStore } from '@/stores/useAuthStore'
+
+const authStore = useAuthStore()
 
 defineProps({
 	subject: {
@@ -53,7 +56,7 @@ const handleDeleteSubject = async (id) => {
 					<img src="/icons/book-gray.svg" alt="Book" />
 					{{ subject.practice }} {{ subject.practice_count }} ЛПЗ
 				</div>
-				<div class="flex gap-2 absolute right-0">
+				<div v-if="authStore.isAdmin" class="flex gap-2 absolute right-0">
 					<RouterLink :to="`/subjects/edit/${subject.id}`">
 						<img src="/icons/edit.svg" alt="Редактировать" />
 					</RouterLink>
